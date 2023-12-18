@@ -1,8 +1,12 @@
 import time
+from functools import lru_cache
 
 f = open("day12_input.txt", "r")
 
+
+@lru_cache(maxsize=None)
 def count(string, nums):
+    nums = list(nums)
     res = 0
     # print(string)
     # print(nums)
@@ -27,25 +31,24 @@ def count(string, nums):
                 continue
             if '#' in string[:j]:
                 continue
-            res += count(string[j + nums[0] + 1:], nums[1:])
+            res += count(string[j + nums[0] + 1:], tuple(nums[1:]))
     if not '#' in string[:i]:
-        res += count(string[i:], nums)
+        res += count(string[i:], tuple(nums))
     return res
 
-start = time.time()
+
 res = 0
+start = time.time()
 
 for i, line in enumerate(f.read().strip().split('\n')):
     string, nums = line.split()
     new_string = string
     new_nums = nums
-    for j in range(4):
+    for i in range(4):
         new_string += '?' + string
         new_nums += ',' + nums
     new_nums = list(map(int, new_nums.split(',')))
-    # print(new_string, new_nums)
-    # print(count(new_string, new_nums))
-    res += count(new_string, new_nums)
+    res += count(new_string, tuple(new_nums))
 
 print(res)
 
